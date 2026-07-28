@@ -1,4 +1,5 @@
 import { RefreshCw } from 'lucide-react';
+import { campLabel, campStatusLabel, formatDate } from '../lib/format.js';
 
 export function PageHeader({
   title,
@@ -10,11 +11,20 @@ export function PageHeader({
   loading,
   extra,
 }) {
+  const selectedCamp = camps.find((camp) => camp.camp_id === campId);
+
   return (
     <header className="page-header">
       <div>
         <h2 className="page-title">{title}</h2>
         <p className="page-description">{description}</p>
+        {selectedCamp ? (
+          <div className="selected-camp-meta">
+            <span>{campStatusLabel(selectedCamp.display_status || selectedCamp.status) || '营期'}</span>
+            <span>开营：{formatDate(selectedCamp.start_date)}</span>
+            <span>结营：{formatDate(selectedCamp.end_date)}</span>
+          </div>
+        ) : null}
       </div>
       <div className="filter-bar">
         {camps.length ? (
@@ -45,10 +55,4 @@ export function PageHeader({
       </div>
     </header>
   );
-}
-
-function campLabel(camp) {
-  const number = camp.camp_number ? `第${camp.camp_number}期｜` : '';
-  const status = camp.display_status ? `（${camp.display_status}）` : '';
-  return `${number}${camp.camp_name || camp.camp_id}${status}`;
 }

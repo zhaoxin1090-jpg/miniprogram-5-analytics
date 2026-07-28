@@ -1,7 +1,15 @@
 import React from 'react';
 import { X } from 'lucide-react';
 import { fetchCohortUserTasks, fetchUserEvents } from '../lib/analyticsApi.js';
-import { formatDateTime, studentName, studentPhone } from '../lib/format.js';
+import {
+  enrollmentTypeLabel,
+  eventActionLabel,
+  eventResultLabel,
+  formatDateTime,
+  studentName,
+  studentPhone,
+  taskTypeLabel,
+} from '../lib/format.js';
 import { StateBlock } from '../components/StateBlock.jsx';
 
 export function StudentDrawer({ campId, student, onClose }) {
@@ -41,7 +49,12 @@ export function StudentDrawer({ campId, student, onClose }) {
         <div className="drawer-header">
           <div>
             <h3 className="drawer-title">{studentName(student)}</h3>
-            <div className="muted">{studentPhone(student)}</div>
+            <div className="student-meta-line">
+              <span>{studentPhone(student)}</span>
+              <span>{enrollmentTypeLabel(student.enrollment_type)}</span>
+              <span>正式完成 {student.verified_completed_days ?? 0} 天</span>
+              <span>{student.day0_done ? 'Day0 已完成' : 'Day0 未完成'}</span>
+            </div>
           </div>
           <button className="ghost-button" type="button" onClick={onClose}>
             <X size={16} />
@@ -57,6 +70,21 @@ export function StudentDrawer({ campId, student, onClose }) {
               学习行为明细
             </button>
           </div>
+          <section className="definition-strip drawer-definition">
+            {tab === 'tasks' ? (
+              <>
+                <strong>任务详情口径</strong>
+                <span>按学习日展示本营期任务完成情况。</span>
+                <span>“已打卡”代表该日完成打卡结算，不代表每个任务都有内容可查看。</span>
+              </>
+            ) : (
+              <>
+                <strong>行为明细口径</strong>
+                <span>记录学员最近 30 天打开页面、打开任务、提交和打卡等行为事件。</span>
+                <span>行为事件只说明发生过操作，不等同于最终完成结果。</span>
+              </>
+            )}
+          </section>
 
           {loading ? <StateBlock type="loading" title="数据加载中..." /> : null}
           {error ? <StateBlock type="error" title={error} /> : null}
@@ -81,7 +109,7 @@ function TaskDetail({ data }) {
               {day.checkin_done ? '已打卡' : '未打卡'}
             </span>
           </div>
-          <table className="table">
+          <table className="table task-detail-table">
             <thead>
               <tr>
                 <th>任务类型</th>
@@ -95,7 +123,11 @@ function TaskDetail({ data }) {
                 <tr key={task.task_id}>
                   <td>{taskTypeLabel(task.task_type)}</td>
                   <td>{task.task_title || '-'}</td>
-                  <td>{task.completed ? '已完成' : '未完成'}</td>
+                  <td>
+                    <span className={`status-pill ${task.completed ? '' : 'muted'}`}>
+                      {task.completed ? '已完成' : '未完成'}
+                    </span>
+                  </td>
                   <td>{formatDateTime(task.completed_at_ms || task.completed_at)}</td>
                 </tr>
               ))}
@@ -126,24 +158,14 @@ function EventDetail({ data }) {
         {events.map((event, index) => (
           <tr key={`${event.created_at_ms}-${index}`}>
             <td className="nowrap">{formatDateTime(event.created_at_ms || event.time)}</td>
-            <td>{event.action || '-'}</td>
+            <td>{eventActionLabel(event.event_type || event.action)}</td>
             <td>{event.page || '-'}</td>
             <td>{event.day_number || event.day_number === 0 ? `Day${event.day_number}` : '-'}</td>
             <td>{event.task_title || '-'}</td>
-            <td>{event.result || '-'}</td>
+            <td>{eventResultLabel(event.result)}</td>
           </tr>
         ))}
       </tbody>
     </table>
   );
-}
-
-function taskTypeLabel(type) {
-  const labels = {
-    reading: '阅读',
-    writing: '书写',
-    mindfulness: '正念',
-    emotion_diary: '情绪日记',
-  };
-  return labels[type] || type || '-';
 }

@@ -2,7 +2,8 @@ import React from 'react';
 import { PageHeader } from '../components/PageHeader.jsx';
 import { StateBlock } from '../components/StateBlock.jsx';
 import { fetchTaskAnalysis } from '../lib/analyticsApi.js';
-import { percent } from '../lib/format.js';
+import { percent, taskTypeLabel } from '../lib/format.js';
+import { TaskSubmissionsDrawer } from './TaskSubmissionsDrawer.jsx';
 
 const taskTypes = [
   { value: 'all', label: '全部类型' },
@@ -17,6 +18,7 @@ export function TaskAnalysisPage({ campId, onCampIdChange, camps }) {
   const [data, setData] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState('');
+  const [submissionTask, setSubmissionTask] = React.useState(null);
 
   const load = React.useCallback(async () => {
     if (!campId.trim()) return;
@@ -56,6 +58,13 @@ export function TaskAnalysisPage({ campId, onCampIdChange, camps }) {
         }
       />
 
+      <section className="definition-strip">
+        <strong>任务分析口径</strong>
+        <span>查看次数：学员打开该任务详情的事件数。</span>
+        <span>提交成功/失败：该任务提交结果事件数。</span>
+        <span>提交率：提交成功数 / 查看次数，用于发现内容理解或提交阻塞问题。</span>
+      </section>
+
       <section className="panel">
         <div className="panel-header">
           <h3 className="panel-title">任务列表</h3>
@@ -76,24 +85,34 @@ export function TaskAnalysisPage({ campId, onCampIdChange, camps }) {
                   <th>提交成功</th>
                   <th>提交失败</th>
                   <th>提交率</th>
+                  <th>提交内容</th>
                 </tr>
               </thead>
               <tbody>
                 {tasks.map((task) => (
                   <tr key={`${task.task_id}-${task.task_type}`}>
                     <td>{task.day_number || task.day_number === 0 ? `Day${task.day_number}` : '-'}</td>
-                    <td>{taskTypeName(task.task_type)}</td>
+                    <td>{taskTypeLabel(task.task_type)}</td>
                     <td>{task.task_title || '-'}</td>
                     <td>{task.views || 0}</td>
                     <td>{task.submits || 0}</td>
                     <td>{task.failures || 0}</td>
                     <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <div className="rate-cell">
                         <div className="progress-track">
                           <div className="progress-fill" style={{ width: percent(task.submit_rate) }} />
                         </div>
                         <span className="nowrap">{percent(task.submit_rate)}</span>
                       </div>
+                    </td>
+                    <td>
+                      {canViewSubmissions(task) ? (
+                        <button className="ghost-button" type="button" onClick={() => setSubmissionTask(task)}>
+                          查看提交内容
+                        </button>
+                      ) : (
+                        <span className="muted">-</span>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -102,11 +121,14 @@ export function TaskAnalysisPage({ campId, onCampIdChange, camps }) {
           </div>
         ) : null}
       </section>
+
+      {submissionTask ? (
+        <TaskSubmissionsDrawer campId={campId.trim()} task={submissionTask} onClose={() => setSubmissionTask(null)} />
+      ) : null}
     </>
   );
 }
 
-function taskTypeName(type) {
-  const match = taskTypes.find((item) => item.value === type);
-  return match?.label || type || '-';
+function canViewSubmissions(task) {
+  return task && (task.task_type === 'writing' || task.task_type === 'mindfulness') && task.task_id;
 }

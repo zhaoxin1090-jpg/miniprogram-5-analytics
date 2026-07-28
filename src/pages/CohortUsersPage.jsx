@@ -1,6 +1,6 @@
 import React from 'react';
 import { fetchCohortUsers } from '../lib/analyticsApi.js';
-import { formatDateTime, studentName, studentPhone } from '../lib/format.js';
+import { enrollmentTypeLabel, formatDateTime, studentName, studentPhone } from '../lib/format.js';
 import { PageHeader } from '../components/PageHeader.jsx';
 import { StateBlock } from '../components/StateBlock.jsx';
 import { StudentDrawer } from './StudentDrawer.jsx';
@@ -54,6 +54,13 @@ export function CohortUsersPage({ campId, onCampIdChange, camps }) {
         loading={loading}
       />
 
+      <section className="definition-strip">
+        <strong>学员口径</strong>
+        <span>正式完成天数：不含 Day0，按核验后的正式学习日去重。</span>
+        <span>距离 21 天：达到奖学金要求还差的正式学习日。</span>
+        <span>奖学金：仅表示是否满足 Day0 + 21 天条件。</span>
+      </section>
+
       <section className="panel">
         <div className="panel-header">
           <h3 className="panel-title">学员列表</h3>
@@ -70,7 +77,7 @@ export function CohortUsersPage({ campId, onCampIdChange, camps }) {
                   <th>小程序昵称</th>
                   <th>手机号</th>
                   <th>报名类型</th>
-                  <th>Day0</th>
+                  <th>Day0 启动日</th>
                   <th>
                     <button
                       className="table-sort-button"
@@ -80,8 +87,8 @@ export function CohortUsersPage({ campId, onCampIdChange, camps }) {
                       正式完成天数 {sortDirection === 'desc' ? '↓' : '↑'}
                     </button>
                   </th>
-                  <th>距离 21 天</th>
-                  <th>奖学金</th>
+                  <th>距离达标还差</th>
+                  <th>奖学金状态</th>
                   <th>最近打卡</th>
                   <th>操作</th>
                 </tr>
@@ -91,14 +98,14 @@ export function CohortUsersPage({ campId, onCampIdChange, camps }) {
                   <tr key={item.enrollment_id}>
                     <td>{studentName(item)}</td>
                     <td className="nowrap">{studentPhone(item)}</td>
-                    <td>{item.enrollment_type === 'retake' ? '复训' : '首训'}</td>
+                    <td>{enrollmentTypeLabel(item.enrollment_type)}</td>
                     <td>
                       <span className={`status-pill ${item.day0_done ? '' : 'muted'}`}>
                         {item.day0_done ? '已完成' : '未完成'}
                       </span>
                     </td>
-                    <td>{item.verified_completed_days ?? 0}</td>
-                    <td>{item.remaining_days_to_21 ?? '-'}</td>
+                    <td>{item.verified_completed_days ?? 0} 天</td>
+                    <td>{formatRemainingDays(item.remaining_days_to_21)}</td>
                     <td>
                       <span className={`status-pill ${item.scholarship_qualified ? '' : 'warn'}`}>
                         {item.scholarship_qualified ? '达标' : '未达标'}
@@ -131,4 +138,11 @@ export function CohortUsersPage({ campId, onCampIdChange, camps }) {
       ) : null}
     </>
   );
+}
+
+function formatRemainingDays(value) {
+  if (value === null || value === undefined || value === '') return '-';
+  const days = Number(value);
+  if (!Number.isFinite(days)) return '-';
+  return days <= 0 ? '已达标' : `${days} 天`;
 }
