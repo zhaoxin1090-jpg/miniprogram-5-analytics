@@ -16,6 +16,16 @@
 - 学员详情：调用 `analyticsCohortUserTasks` 和 `analyticsUserEvents`
 - 任务表现分析：调用 `analyticsTaskAnalysis`
 
+## 当前入口
+
+CloudBase Web App 默认域名：
+
+```text
+https://juexinglab-analytics-cloud1-d9grcmy66e93364b0.webapps.tcloudbase.com
+```
+
+当前该默认域名已完成登录和数据加载验收，可作为现阶段运营后台入口。后续如需更正式的访问地址，再绑定自定义域名或切换其他 Web 托管入口。
+
 ## 本地开发
 
 ```bash
