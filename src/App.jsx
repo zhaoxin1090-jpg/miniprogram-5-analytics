@@ -1,58 +1,66 @@
-// @ts-ignore;
 import React from 'react';
-// @ts-ignore;
-import { ToastProvider } from '@/components/ui';
+import { CalendarCheck, ClipboardList, LineChart } from 'lucide-react';
+import { Sidebar } from './components/Sidebar.jsx';
+import { CohortSummaryPage } from './pages/CohortSummaryPage.jsx';
+import { CohortUsersPage } from './pages/CohortUsersPage.jsx';
+import { TaskAnalysisPage } from './pages/TaskAnalysisPage.jsx';
+import { fetchCamps } from './lib/analyticsApi.js';
 
-import { Sidebar } from '@/components/Sidebar';
-import CohortAnalytics from '@/pages/cohortAnalytics';
+const pages = [
+  {
+    id: 'summary',
+    label: '营期完成率',
+    icon: CalendarCheck,
+    component: CohortSummaryPage,
+  },
+  {
+    id: 'users',
+    label: '学员完成情况',
+    icon: ClipboardList,
+    component: CohortUsersPage,
+  },
+  {
+    id: 'tasks',
+    label: '任务表现分析',
+    icon: LineChart,
+    component: TaskAnalysisPage,
+  },
+];
 
-// 页面路由映射
-const pageComponents = {
-  cohortAnalytics: CohortAnalytics
-};
-export default function App({
-  $w
-}) {
-  const [currentPage, setCurrentPage] = React.useState('cohortAnalytics');
-  const [pageParams, setPageParams] = React.useState({});
-  const navigateTo = React.useCallback(({
-    pageId,
-    params = {}
-  }) => {
-    setCurrentPage(pageId);
-    setPageParams(params);
+export default function App() {
+  const [currentPage, setCurrentPage] = React.useState('summary');
+  const [campId, setCampId] = React.useState('camp_2026_03');
+  const [camps, setCamps] = React.useState([]);
+  const [campsError, setCampsError] = React.useState('');
+  const activePage = pages.find((page) => page.id === currentPage) || pages[0];
+  const PageComponent = activePage.component;
+
+  React.useEffect(() => {
+    let alive = true;
+    fetchCamps()
+      .then((result) => {
+        if (!alive) return;
+        const items = result.items || [];
+        setCamps(items);
+        if (items.length && !items.some((camp) => camp.camp_id === campId)) {
+          setCampId(items[0].camp_id);
+        }
+      })
+      .catch((err) => {
+        if (alive) setCampsError(err.message || '营期列表加载失败');
+      });
+    return () => {
+      alive = false;
+    };
   }, []);
-  const navigateBack = React.useCallback(() => {
-    // 返回上一页逻辑
-  }, []);
-  const enhancedW = React.useMemo(() => ({
-    ...$w,
-    utils: {
-      ...$w?.utils,
-      navigateTo,
-      navigateBack
-    },
-    page: {
-      dataset: {
-        params: pageParams
-      }
-    }
-  }), [$w, navigateTo, navigateBack, pageParams]);
-  const PageComponent = pageComponents[currentPage];
-  if (!PageComponent) {
-    return <div className="flex items-center justify-center h-screen bg-gray-50">
-        <div className="text-center">
-          <h2 className="text-xl font-semibold text-gray-700">页面未找到</h2>
-          <p className="text-gray-500 mt-2">请求的页面 "{currentPage}" 不存在</p>
-        </div>
-      </div>;
-  }
-  return <ToastProvider>
-      <div className="flex h-screen bg-gray-50">
-        <Sidebar currentPage={currentPage} onNavigate={navigateTo} />
-        <main className="flex-1 overflow-auto">
-          <PageComponent $w={enhancedW} />
-        </main>
-      </div>
-    </ToastProvider>;
+
+  return (
+    <div className="app-shell">
+      <Sidebar pages={pages} currentPage={activePage.id} onNavigate={setCurrentPage} />
+      <main className="main-panel">
+        {campsError ? <div className="top-error">{campsError}</div> : null}
+        <PageComponent campId={campId} onCampIdChange={setCampId} camps={camps} />
+      </main>
+    </div>
+  );
 }
