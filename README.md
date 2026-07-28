@@ -6,8 +6,9 @@
 
 - 只读调用 CloudBase 分析云函数。
 - 不修改订单、权益、课程、打卡、奖学金、提现或 CMS 数据。
-- 页面不展示 `openid`、`unionid`、订单号、书写正文或正念感想正文。
+- 页面不展示 `openid`、`unionid` 或订单号。
 - 学员列表面向管理员展示小程序昵称和完整手机号，便于运营联系。
+- 任务表现分析支持管理员查看书写 / 正念任务的提交内容汇总。
 
 ## 页面
 
@@ -15,6 +16,7 @@
 - 学员完成情况：调用 `analyticsCohortUsers`
 - 学员详情：调用 `analyticsCohortUserTasks` 和 `analyticsUserEvents`
 - 任务表现分析：调用 `analyticsTaskAnalysis`
+- 任务提交内容：调用 `analyticsTaskSubmissions`
 
 ## 当前入口
 
@@ -24,7 +26,13 @@ CloudBase Web App 默认域名：
 https://juexinglab-analytics-cloud1-d9grcmy66e93364b0.webapps.tcloudbase.com
 ```
 
-当前该默认域名已完成登录和数据加载验收，可作为现阶段运营后台入口。后续如需更正式的访问地址，再绑定自定义域名或切换其他 Web 托管入口。
+CloudBase 静态托管入口：
+
+```text
+https://cloud1-d9grcmy66e93364b0-1438069091.tcloudbaseapp.com
+```
+
+当前静态托管入口已完成登录、数据加载和任务提交内容下钻验收，可作为现阶段运营后台入口。后续如需更正式的访问地址，再绑定自定义域名或切换其他 Web 托管入口。
 
 ## 本地开发
 
@@ -75,6 +83,17 @@ npm run build
 部署前必须先确认：
 
 - 分析云函数已部署。
+- `analyticsTaskSubmissions` 已部署且权限配置和其他分析函数一致。
 - Web Auth 可登录。
 - 分析函数管理员权限配置正确。
 - 不在未验收状态下发布到公开入口。
+
+## 验收状态
+
+2026-07-28 已完成线上验收：
+
+- 营期完成率可加载。
+- 学员完成情况可加载。
+- 学员详情中的任务完成详情和学习行为可加载。
+- 任务表现分析可加载。
+- 书写 / 正念任务可打开提交内容汇总。
