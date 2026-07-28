@@ -29,6 +29,140 @@ button {
   cursor: pointer;
 }
 
+.login-screen {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(420px, 0.92fr) minmax(390px, 520px);
+  align-items: center;
+  gap: 48px;
+  padding: 72px 10vw;
+}
+
+.login-intro {
+  max-width: 560px;
+}
+
+.login-mark {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+}
+
+.login-kicker {
+  margin: 22px 0 10px;
+  color: #1b8a7a;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.login-title {
+  margin: 0;
+  color: #16312d;
+  font-size: 42px;
+  line-height: 1.16;
+  font-weight: 900;
+}
+
+.login-copy {
+  margin: 18px 0 0;
+  max-width: 460px;
+  color: #65756f;
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+.login-security {
+  margin-top: 28px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #1b8a7a;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.login-panel {
+  padding: 34px;
+  background: #fff;
+  border: 1px solid #d8e3df;
+  border-radius: 18px;
+  box-shadow: 0 24px 60px rgba(22, 49, 45, 0.1);
+}
+
+.login-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 26px;
+}
+
+.login-panel-header svg {
+  color: #1b8a7a;
+}
+
+.login-panel-header h2 {
+  margin: 0;
+  color: #16312d;
+  font-size: 22px;
+}
+
+.login-panel-header p {
+  margin: 4px 0 0;
+  color: #65756f;
+  font-size: 13px;
+}
+
+.form-field {
+  display: block;
+  margin-bottom: 16px;
+}
+
+.form-field span {
+  display: block;
+  margin-bottom: 8px;
+  color: #43514d;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.form-field input {
+  width: 100%;
+  height: 44px;
+  padding: 0 13px;
+  border: 1px solid #c9d8d3;
+  border-radius: 10px;
+  color: #1d2f2b;
+  background: #fff;
+}
+
+.form-field input:focus {
+  outline: none;
+  border-color: #1b8a7a;
+  box-shadow: 0 0 0 3px rgba(27, 138, 122, 0.14);
+}
+
+.form-error {
+  margin-bottom: 14px;
+  padding: 10px 12px;
+  border: 1px solid #f0c8a0;
+  border-radius: 9px;
+  background: #fff7ed;
+  color: #9a4d1a;
+  font-size: 13px;
+}
+
+.login-button {
+  width: 100%;
+  height: 44px;
+}
+
+.auth-loading {
+  grid-column: 1 / -1;
+  justify-self: center;
+  color: #65756f;
+  font-weight: 700;
+}
+
 .app-shell {
   display: flex;
   min-height: 100vh;
@@ -102,6 +236,30 @@ button {
   padding: 16px 24px 22px;
   color: rgba(255, 255, 255, 0.45);
   font-size: 12px;
+}
+
+.logout-button {
+  width: 100%;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.logout-button:hover {
+  color: #fff;
+  background: rgba(27, 138, 122, 0.28);
+}
+
+.version-label {
+  display: block;
+  text-align: center;
 }
 
 .main-panel {
