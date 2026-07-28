@@ -36,6 +36,26 @@ VITE_TCB_ENV_ID=cloud1-d9grcmy66e93364b0
 VITE_TCB_REGION=ap-shanghai
 ```
 
+## 登录与权限
+
+后台使用 CloudBase Web Auth 的账号密码登录，不再使用匿名登录。
+
+上线前需要在 CloudBase 控制台确认：
+
+- 身份认证已开启“账号密码登录”。
+- 已创建可用于运营登录的账号。
+- 云函数客户端调用权限建议设为：
+
+```json
+{
+  "*": {
+    "invoke": "auth != null && auth.loginType != 'ANONYMOUS'"
+  }
+}
+```
+
+分析云函数内部仍需开启 Web Auth 访问开关，例如 `ANALYTICS_ALLOW_WEB_AUTH=true`。该模式表示所有已登录的 Web 账号都可访问数据后台，不再逐个配置管理员 Web 用户 ID。
+
 ## 构建
 
 ```bash

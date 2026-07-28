@@ -4,7 +4,6 @@ const envId = import.meta.env.VITE_TCB_ENV_ID || 'cloud1-d9grcmy66e93364b0';
 const region = import.meta.env.VITE_TCB_REGION || 'ap-shanghai';
 
 let appInstance;
-let authReady;
 
 function getApp() {
   if (!appInstance) {
@@ -16,20 +15,42 @@ function getApp() {
   return appInstance;
 }
 
+function getAuth() {
+  return getApp().auth({ persistence: 'local' });
+}
+
+function isAnonymousSession(session) {
+  const user = session?.user || {};
+  return Boolean(user.is_anonymous || user.isAnonymous || user.user_metadata?.is_anonymous);
+}
+
+export async function getCurrentSession() {
+  const auth = getAuth();
+  const { data, error } = await auth.getSession();
+  if (error) throw new Error(error.message || '登录状态读取失败');
+  const session = data?.session || null;
+  if (!session || isAnonymousSession(session)) return null;
+  return session;
+}
+
+export async function signInWithPassword(username, password) {
+  const auth = getAuth();
+  const { data, error } = await auth.signInWithPassword({ username, password });
+  if (error) throw new Error(error.message || '账号或密码错误');
+  if (!data?.session) throw new Error('登录失败，请稍后重试');
+  return data.session;
+}
+
+export async function signOut() {
+  const auth = getAuth();
+  const { error } = await auth.signOut();
+  if (error) throw new Error(error.message || '退出登录失败');
+}
+
 async function ensureAuth() {
-  if (!authReady) {
-    const app = getApp();
-    const auth = app.auth({ persistence: 'local' });
-    authReady = auth.getSession().then(async (sessionResult) => {
-      if (sessionResult?.data?.session) return true;
-      const loginResult = await auth.signInAnonymously();
-      if (loginResult?.error) {
-        throw new Error(loginResult.error.message || '后台登录失败');
-      }
-      return true;
-    });
-  }
-  return authReady;
+  const session = await getCurrentSession();
+  if (!session) throw new Error('请先登录数据后台');
+  return true;
 }
 
 export async function callFunction(name, data) {

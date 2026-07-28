@@ -1,4 +1,6 @@
-export function Sidebar({ pages, currentPage, onNavigate }) {
+import { LogOut } from 'lucide-react';
+
+export function Sidebar({ pages, currentPage, onNavigate, onSignOut }) {
   return (
     <aside className="sidebar">
       <div className="brand">
@@ -22,7 +24,13 @@ export function Sidebar({ pages, currentPage, onNavigate }) {
           );
         })}
       </nav>
-      <div className="sidebar-footer">DATA-005 MVP</div>
+      <div className="sidebar-footer">
+        <button type="button" className="logout-button" onClick={onSignOut}>
+          <LogOut size={16} />
+          <span>退出登录</span>
+        </button>
+        <span className="version-label">DATA-006</span>
+      </div>
     </aside>
   );
 }
