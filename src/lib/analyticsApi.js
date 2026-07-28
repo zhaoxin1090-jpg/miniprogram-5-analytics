@@ -39,3 +39,13 @@ export function fetchTaskAnalysis(campId, taskType = 'all', days = 30) {
   if (taskType !== 'all') request.task_type = taskType;
   return callFunction('analyticsTaskAnalysis', request);
 }
+
+export function fetchTaskSubmissions(campId, taskId, taskType, page = 0, pageSize = 20) {
+  return callFunction('analyticsTaskSubmissions', {
+    camp_id: campId,
+    task_id: taskId,
+    task_type: taskType,
+    page,
+    page_size: pageSize,
+  });
+}
