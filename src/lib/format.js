@@ -1,3 +1,5 @@
+import { formatCampName } from './campLabel.js';
+
 export function formatDate(value) {
   if (!value) return '-';
   const date = new Date(value);
@@ -19,10 +21,10 @@ export function percent(value) {
 
 export function campLabel(camp) {
   if (!camp) return '未选择营期';
-  const number = camp.camp_number ? `第${camp.camp_number}期｜` : '';
+
   const status = campStatusLabel(camp.display_status || camp.status);
   const suffix = status ? `（${status}）` : '';
-  return `${number}${camp.camp_name || camp.camp_id}${suffix}`;
+  return `${formatCampName(camp, camp.camp_id)}${suffix}`;
 }
 
 export function campStatusLabel(status) {
