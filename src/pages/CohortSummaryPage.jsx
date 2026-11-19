@@ -5,6 +5,7 @@ import { MetricCard } from '../components/MetricCard.jsx';
 import { StateBlock } from '../components/StateBlock.jsx';
 import { fetchCohortSummary } from '../lib/analyticsApi.js';
 import { campStatusLabel, formatDate, taskTypeLabel } from '../lib/format.js';
+import { formatCampName } from '../lib/campLabel.js';
 
 const taskTypes = ['reading', 'writing', 'mindfulness', 'emotion_diary'];
 
@@ -54,9 +55,9 @@ export function CohortSummaryPage({ campId, onCampIdChange, camps }) {
         <>
           <section className="panel">
             <div className="panel-header">
-              <h3 className="panel-title">{camp.camp_name || campId}</h3>
+              <h3 className="panel-title">{formatCampName(camp, campId)}</h3>
               <div className="status-group">
-                <span className="status-pill">第{camp.camp_number || '-'}期</span>
+
                 <span className="status-pill muted">{campStatusLabel(camp.display_status || camp.status) || '营期状态'}</span>
               </div>
             </div>
