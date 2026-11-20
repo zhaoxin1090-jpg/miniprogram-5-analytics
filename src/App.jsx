@@ -1,10 +1,12 @@
 import React from 'react';
-import { CalendarCheck, ClipboardList, LineChart } from 'lucide-react';
+import { CalendarCheck, ClipboardList, FileDown, Inbox, LineChart } from 'lucide-react';
 import { Sidebar } from './components/Sidebar.jsx';
 import { CohortSummaryPage } from './pages/CohortSummaryPage.jsx';
 import { CohortUsersPage } from './pages/CohortUsersPage.jsx';
 import { LoginPage } from './pages/LoginPage.jsx';
 import { TaskAnalysisPage } from './pages/TaskAnalysisPage.jsx';
+import { BehaviorExportsPage } from './pages/ArchivePanel.jsx';
+import { ExportJobsPage } from './pages/ExportJobsPage.jsx';
 import { fetchCamps } from './lib/analyticsApi.js';
 import { getCurrentSession, signOut } from './lib/cloudbaseClient.js';
 
@@ -27,6 +29,8 @@ const pages = [
     icon: LineChart,
     component: TaskAnalysisPage,
   },
+  { id: 'behavior', label: '行为导出', icon: FileDown, component: BehaviorExportsPage },
+  { id: 'export_jobs', label: '导出中心', icon: Inbox, component: ExportJobsPage },
 ];
 
 export default function App() {
