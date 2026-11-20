@@ -419,6 +419,95 @@ button {
   border-bottom: 1px solid #e4ece9;
 }
 
+.roster-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px 12px;
+}
+
+.roster-notice {
+  margin: 8px 16px;
+}
+
+.analysis-table-scroll {
+  overflow-x: auto;
+}
+
+.analysis-group-select {
+  min-width: 100px;
+}
+
+.task-filters {
+  align-items: flex-end;
+}
+
+.task-filters label {
+  display: grid;
+  gap: 4px;
+}
+
+.task-filters .filter-input,
+.task-filters .filter-select {
+  min-width: 130px;
+}
+
+.analysis-table-scroll .table th,
+.analysis-table-scroll .table td {
+  min-width: 72px;
+}
+
+.analysis-pagination {
+  margin-top: 16px;
+}
+
+.archive-controls {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
+.export-dialog-backdrop {
+  z-index: 30;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+}
+
+.export-dialog {
+  width: min(680px, 100%);
+  max-height: 88vh;
+  overflow: auto;
+}
+
+.cohort-selection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.archive-controls fieldset {
+  border: 1px solid #d8e3df;
+  margin: 0;
+  padding: 12px 14px;
+  min-width: 0;
+}
+
+.archive-options,
+.archive-option {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+}
+
+.archive-option {
+  gap: 6px;
+}
+
 .panel-title {
   margin: 0;
   font-size: 17px;

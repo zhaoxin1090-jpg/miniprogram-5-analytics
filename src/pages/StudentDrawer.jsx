@@ -11,6 +11,7 @@ import {
   taskTypeLabel,
 } from '../lib/format.js';
 import { StateBlock } from '../components/StateBlock.jsx';
+import { ArchivePanel } from './ArchivePanel.jsx';
 
 export function StudentDrawer({ campId, student, onClose }) {
   const [tab, setTab] = React.useState('tasks');
@@ -20,6 +21,7 @@ export function StudentDrawer({ campId, student, onClose }) {
   const [error, setError] = React.useState('');
 
   React.useEffect(() => {
+    if (tab === 'archive') return undefined;
     let alive = true;
     async function load() {
       setLoading(true);
@@ -69,7 +71,12 @@ export function StudentDrawer({ campId, student, onClose }) {
             <button className={`tab-button ${tab === 'events' ? 'active' : ''}`} type="button" onClick={() => setTab('events')}>
               学习行为明细
             </button>
+            <button className={`tab-button ${tab === 'archive' ? 'active' : ''}`} type="button" onClick={() => setTab('archive')}>
+              档案导出
+            </button>
           </div>
+          {tab === 'archive' ? <ArchivePanel campId={campId} student={student} /> : (
+          <>
           <section className="definition-strip drawer-definition">
             {tab === 'tasks' ? (
               <>
@@ -90,6 +97,8 @@ export function StudentDrawer({ campId, student, onClose }) {
           {error ? <StateBlock type="error" title={error} /> : null}
           {!loading && !error && tab === 'tasks' ? <TaskDetail data={tasks} /> : null}
           {!loading && !error && tab === 'events' ? <EventDetail data={events} /> : null}
+          </>
+          )}
         </div>
       </aside>
     </div>
